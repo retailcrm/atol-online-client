@@ -1,0 +1,28 @@
+{
+    "name": "intaro/atol-online-client",
+    "type": "library",
+    "license": "proprietary",
+    "description": "Api client for Atol Online",
+    "authors": [
+        {
+            "name": "retailCRM",
+            "email": "support@retailcrm.ru"
+        }
+    ],
+    "require": {
+        "php": ">=7.1",
+        "ext-curl": "*",
+        "guzzlehttp/guzzle": "~6.0",
+        "jms/serializer-bundle": "~0.12",
+        "symfony/validator": "2.8.*"
+    },
+    "require-dev": {
+        "phpunit/phpunit": "7.1."
+    },
+    "support": {
+        "email": "support@retailcrm.ru"
+    },
+    "autoload": {
+        "psr-0": { "AtolOnlineClient\\": "src/" }
+    }
+}
