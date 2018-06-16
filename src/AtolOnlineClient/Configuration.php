@@ -42,11 +42,11 @@ class Configuration implements ConfigurationInterface
             $connection->login = $connectionItem['login'];
             $connection->pass = $connectionItem['pass'];
             $connection->group = $connectionItem['group'];
-            $connection->legalEntity = $connectionItem['legalEntity'];
+//            $connection->legalEntity = $connectionItem['legalEntity'];
             $connection->sno = $connectionItem['sno'];
             $connection->enabled = (bool) $connectionItem['enabled'];
-            $connection->paymentTypes = $connectionItem['paymentTypes'];
-            $connection->paymentStatuses = $connectionItem['paymentStatuses'];
+//            $connection->paymentTypes = $connectionItem['paymentTypes'];
+//            $connection->paymentStatuses = $connectionItem['paymentStatuses'];
             $connection->ofd = $connectionItem['ofd'];
             $connection->version = $connectionItem['version'];
             $this->connections[] = $connection;
@@ -142,5 +142,10 @@ class Configuration implements ConfigurationInterface
         }
 
         return false;
+    }
+
+    protected function postLoadConfiguration()
+    {
+        
     }
 }
