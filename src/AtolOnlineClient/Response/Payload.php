@@ -1,6 +1,6 @@
 <?php
 
-namespace AtolOnlineClientResponse;
+namespace AtolOnlineClient\Response;
 
 use JMS\Serializer\Annotation as Serializer;
 

@@ -4,13 +4,18 @@ namespace AtolOnlineClient;
 
 use AtolOnlineClient\Configuration\Connection;
 use AtolOnlineClient\Response\OperationResponse;
+use Guzzle\Http\Client;
 use JMS\Serializer\DeserializationContext;
+use JMS\Serializer\SerializationContext;
 use JMS\Serializer\SerializerBuilder;
 
 class AtolOnline
 {
 
     private $serializer;
+
+    /** @var AtolOnlineApi */
+    private $api;
 
     public function __construct()
     {
@@ -32,14 +37,44 @@ class AtolOnline
         );
     }
 
+    public function deserializeCheckStatusResponse($response)
+    {
+        return $this->serializer->deserialize(
+            $response,
+            OperationResponse::class,
+            'json',
+            DeserializationContext::create()->setGroups(['get'])
+        );
+    }
+
+    public function serializeOperationRequest($request)
+    {
+        return $this->serializer->serialize(
+            $request,
+            'json',
+            SerializationContext::create()->setGroups(['set'])
+        );
+    }
+
     /**
      * @param $client
      * @param Connection $connection
-     * @param $isDebug
      * @return AtolOnlineApi
      */
-    public function getApi($client, Connection $connection, $isDebug)
+    public function createApi(Client $client, Connection $connection)
     {
-        return new AtolOnlineApi($client, $connection, $isDebug);
+        if (!$this->api) {
+            $this->api = new AtolOnlineApi($client, $connection);
+        }
+
+        return $this->api;
+    }
+
+    /**
+     * @return AtolOnlineApi
+     */
+    public function getApi()
+    {
+        return $this->api;
     }
 }

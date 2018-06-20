@@ -41,9 +41,11 @@ class Connection
         self::V4,
     ];
 
+    /** @var string */
     protected $url;
+
     /** @var bool */
-    protected $debug;
+    protected $debug = false;
 
     /** @var string */
     public $login;
@@ -53,15 +55,6 @@ class Connection
 
     /** @var string */
     public $group;
-
-    /** @var int */
-    public $legalEntity;
-
-    /** @var array */
-    public $paymentTypes;
-
-    /** @var array */
-    public $paymentStatuses;
 
     /** @var boolean */
     public $enabled;
@@ -75,18 +68,23 @@ class Connection
     /** @var string */
     public $version;
 
+    /** @var bool */
+    public $testMode = false;
+
     /**
-     * @param mixed $url
+     * @return bool
      */
-    public function setUrl($url): void
+    public function isTestMode()
     {
-        $this->url = $url;
+        return $this->testMode;
     }
 
-
-    public function __construct()
+    /**
+     * @param bool $testMode
+     */
+    public function setTestMode(bool $testMode)
     {
-        $this->setUrl('');
+        $this->testMode = $testMode;
     }
 
     /**
@@ -113,7 +111,6 @@ class Connection
         $metadata->addPropertyConstraint('login', new Assert\NotBlank());
         $metadata->addPropertyConstraint('pass', new Assert\NotBlank());
         $metadata->addPropertyConstraint('group', new Assert\NotBlank());
-        $metadata->addPropertyConstraint('legalEntity', new Assert\NotBlank());
         $metadata->addPropertyConstraints('sno', [
             new Assert\Choice([
                 'choices'   => self::snoTypes,
@@ -129,8 +126,6 @@ class Connection
                 'choices'   => self::versions,
             ])
         ]);
-        $metadata->addPropertyConstraint('paymentTypes', new Assert\NotBlank());
-        $metadata->addPropertyConstraint('paymentStatuses', new Assert\NotBlank());
     }
 
     /**

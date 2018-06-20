@@ -17,13 +17,13 @@ class OperationResponse
     private $uuid;
 
     /**
-     * @var string
+     * @var Error
      *
      * @Serializer\Groups({"post", "get"})
-     * @Serializer\SerializedName("timestamp")
-     * @Serializer\Type("string")
+     * @Serializer\SerializedName("error")
+     * @Serializer\Type("AtolOnlineClient\Response\Error")
      */
-    private $timestamp;
+    private $error;
 
     /**
      * @var string
@@ -37,6 +37,52 @@ class OperationResponse
     private $status;
 
     /**
+     * @var Payload
+     *
+     * @Serializer\Groups({"get"})
+     * @Serializer\SerializedName("payload")
+     * @Serializer\Type("AtolOnlineClient\Response\Payload")
+     */
+    private $payload;
+
+    /**
+     * @var string
+     *
+     * @Serializer\Groups({"post", "get"})
+     * @Serializer\SerializedName("timestamp")
+     * @Serializer\Type("string")
+     */
+    private $timestamp;
+
+    /**
+     * @var string
+     *
+     * @Serializer\Groups({"get"})
+     * @Serializer\SerializedName("group_code")
+     * @Serializer\Type("string")
+     */
+    private $groupCode;
+
+    /**
+     * @var string
+     *
+     * @Serializer\Groups({"get"})
+     * @Serializer\SerializedName("daemon_code")
+     * @Serializer\Type("string")
+     */
+    private $daemonCode;
+
+    /**
+     * @var string
+     *
+     * @Serializer\Groups({"get"})
+     * @Serializer\SerializedName("device_code")
+     * @Serializer\Type("string")
+     */
+    private $deviceCode;
+
+
+    /**
      * @var string
      *
      * @Serializer\Groups({"get"})
@@ -45,23 +91,7 @@ class OperationResponse
      */
     private $callbackUrl;
 
-    /**
-     * @var Payload
-     *
-     * @Serializer\Groups({"get"})
-     * @Serializer\SerializedName("payload")
-     * @Serializer\Type("Intaro\CRMFiscalBundle\FiscalService\AtolOnline\Response\Payload")
-     */
-    private $payload;
 
-    /**
-     * @var Error
-     *
-     * @Serializer\Groups({"post", "get"})
-     * @Serializer\SerializedName("error")
-     * @Serializer\Type("Intaro\CRMFiscalBundle\FiscalService\AtolOnline\Response\Error")
-     */
-    private $error;
 
     /**
      * @return string
@@ -181,5 +211,53 @@ class OperationResponse
         $this->payload = $payload;
 
         return $this;
+    }
+
+    /**
+     * @return string
+     */
+    public function getGroupCode()
+    {
+        return $this->groupCode;
+    }
+
+    /**
+     * @param string $groupCode
+     */
+    public function setGroupCode(string $groupCode)
+    {
+        $this->groupCode = $groupCode;
+    }
+
+    /**
+     * @return string
+     */
+    public function getDaemonCode()
+    {
+        return $this->daemonCode;
+    }
+
+    /**
+     * @param string $daemonCode
+     */
+    public function setDaemonCode(string $daemonCode)
+    {
+        $this->daemonCode = $daemonCode;
+    }
+
+    /**
+     * @return string
+     */
+    public function getDeviceCode()
+    {
+        return $this->deviceCode;
+    }
+
+    /**
+     * @param string $deviceCode
+     */
+    public function setDeviceCode(string $deviceCode)
+    {
+        $this->deviceCode = $deviceCode;
     }
 }

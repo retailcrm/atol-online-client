@@ -3,10 +3,12 @@
 namespace AtolOnlineClient;
 
 use AtolOnlineClient\Configuration\Connection;
-use Doctrine\Common\Cache\CacheProvider;
-use GuzzleHttp\Client;
+use Doctrine\Common\Cache\Cache;
+
+use Guzzle\Http\Client;
+
+use Guzzle\Http\Message\Response;
 use GuzzleHttp\Exception\BadResponseException;
-use GuzzleHttp\Psr7\Response;
 use Psr\Log\LoggerInterface;
 
 class AtolOnlineApi
@@ -18,8 +20,7 @@ class AtolOnlineApi
     const TOKEN_CACHE_KEY = 'crm_fiscal_atol_online_token';
     const TOKEN_CACHE_TIME = 60 * 60 * 24;
 
-//    private $baseApiUrl = 'https://online.atol.ru/possystem';
-    private $baseApiUrl = 'https://testonline.atol.ru/possystem';
+    private $baseApiUrl = 'https://online.atol.ru/possystem';
 
     private $login;
     private $pass;
@@ -32,7 +33,7 @@ class AtolOnlineApi
     private $logger;
 
     /**
-     * @var CacheProvider
+     * @var Cache
      */
     private $cache;
 
@@ -51,22 +52,25 @@ class AtolOnlineApi
      */
     private $attemptsCheckStatus;
 
+    /** @var string  */
     private $version;
 
     /**
      * @param Client $client
      * @param Connection $connectionConfig
-     * @param bool $debug
      */
-    public function __construct(Client $client, Connection $connectionConfig, $debug = false)
+    public function __construct(Client $client, Connection $connectionConfig)
     {
         $this->client = $client;
         $this->login = $connectionConfig->login;
         $this->pass = $connectionConfig->pass;
         $this->groupCode = $connectionConfig->group;
         $this->version = $connectionConfig->version;
-        $this->debug = $debug;
+        $this->debug = $connectionConfig->isDebug();
         $this->attempts = 0;
+        if ($connectionConfig->isTestMode()) {
+            $this->baseApiUrl = 'https://testonline.atol.ru/possystem';
+        }
     }
 
     /**
@@ -136,9 +140,9 @@ class AtolOnlineApi
     }
 
     /**
-     * @param CacheProvider $cache
+     * @param Cache $cache
      */
-    public function setCache(CacheProvider $cache)
+    public function setCache(Cache $cache)
     {
         $this->cache = $cache;
     }
