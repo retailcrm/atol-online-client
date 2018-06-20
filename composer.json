@@ -13,7 +13,7 @@
         "php": ">=7.1",
         "ext-curl": "*",
         "guzzle/guzzle": "~3.7",
-        "jms/serializer": "~0.12 || ~1.12",
+        "jms/serializer": "~0.12 || ~1.4",
         "symfony/validator": "2.8.*"
     },
     "require-dev": {
