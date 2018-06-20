@@ -12,7 +12,7 @@ class ReceiptRequest
      * required
      * @Serializer\Groups({"set", "get"})
      * @Serializer\SerializedName("attributes")
-     * @Serializer\Type("AtolOnlineClient\Request\ReceiptAttributesRequest")
+     * @Serializer\Type("AtolOnlineClient\Request\V3\ReceiptAttributesRequest")
      */
     private $attributes;
 
@@ -22,7 +22,7 @@ class ReceiptRequest
      * required
      * @Serializer\Groups({"set", "get"})
      * @Serializer\SerializedName("items")
-     * @Serializer\Type("array<AtolOnlineClient\Request\ReceiptItemRequest>")
+     * @Serializer\Type("array<AtolOnlineClient\Request\V3\ReceiptItemRequest>")
      */
     private $items;
 
@@ -41,7 +41,7 @@ class ReceiptRequest
      * required
      * @Serializer\Groups({"set", "get"})
      * @Serializer\SerializedName("payments")
-     * @Serializer\Type("array<AtolOnlineClient\Request\ReceiptPaymentRequest>")
+     * @Serializer\Type("array<AtolOnlineClient\Request\V3\ReceiptPaymentRequest>")
      */
     private $payments;
 

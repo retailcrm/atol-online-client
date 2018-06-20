@@ -29,7 +29,7 @@ class PaymentReceiptRequest
      * required
      * @Serializer\Groups({"set", "get"})
      * @Serializer\SerializedName("service")
-     * @Serializer\Type("AtolOnlineClient\Request\ServiceRequest")
+     * @Serializer\Type("AtolOnlineClient\Request\V3\ServiceRequest")
      */
     private $service;
 
@@ -38,7 +38,7 @@ class PaymentReceiptRequest
      * required
      * @Serializer\Groups({"set", "get"})
      * @Serializer\SerializedName("receipt")
-     * @Serializer\Type("AtolOnlineClient\Request\ReceiptRequest")
+     * @Serializer\Type("AtolOnlineClient\Request\V3\ReceiptRequest")
      */
     private $receipt;
 
