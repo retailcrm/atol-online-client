@@ -26,27 +26,6 @@ class Configuration implements ConfigurationInterface
         $metadata->addPropertyConstraint('connections', new Assert\Valid());
     }
 
-//    public function loadConnections($connections)
-//    {
-//        if (!$connections) {
-//            return;
-//        }
-//        foreach ($connections as $connectionItem) {
-//            $connection = new Connection();
-//            $connection->login = $connectionItem['login'];
-//            $connection->pass = $connectionItem['pass'];
-//            $connection->group = $connectionItem['group'];
-////            $connection->legalEntity = $connectionItem['legalEntity'];
-//            $connection->sno = $connectionItem['sno'];
-//            $connection->enabled = (bool) $connectionItem['enabled'];
-////            $connection->paymentTypes = $connectionItem['paymentTypes'];
-////            $connection->paymentStatuses = $connectionItem['paymentStatuses'];
-//            $connection->ofd = $connectionItem['ofd'];
-//            $connection->version = $connectionItem['version'];
-//            $this->connections[] = $connection;
-//        }
-//    }
-
     /**
      * @param bool $enabled
      */

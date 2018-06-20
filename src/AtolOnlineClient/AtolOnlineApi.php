@@ -7,8 +7,8 @@ use Doctrine\Common\Cache\Cache;
 
 use Guzzle\Http\Client;
 
+use Guzzle\Http\Exception\BadResponseException;
 use Guzzle\Http\Message\Response;
-use GuzzleHttp\Exception\BadResponseException;
 use Psr\Log\LoggerInterface;
 
 class AtolOnlineApi
@@ -65,6 +65,9 @@ class AtolOnlineApi
         $this->login = $connectionConfig->login;
         $this->pass = $connectionConfig->pass;
         $this->groupCode = $connectionConfig->group;
+        if (!$connectionConfig->version) {
+            $connectionConfig->version = self::API_VERSION_V3;
+        }
         $this->version = $connectionConfig->version;
         $this->debug = $connectionConfig->isDebug();
         $this->attempts = 0;
