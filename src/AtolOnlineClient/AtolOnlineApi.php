@@ -159,7 +159,16 @@ class AtolOnlineApi
     }
 
     /**
-     * @return mixed
+     * @return string
+     */
+    public function getVersion(): string
+    {
+        return $this->version;
+    }
+
+    /**
+     * @return bool|mixed
+     * @throws \Exception
      */
     protected function getToken()
     {
