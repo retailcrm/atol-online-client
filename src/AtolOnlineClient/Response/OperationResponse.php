@@ -8,6 +8,7 @@ class OperationResponse
 {
 
     /**
+     * Поле отсутсвует в ответе а операцию sell с ошибкой начиная с 4й версии
      * @var string
      *
      * @Serializer\Groups({"post", "get"})
@@ -90,8 +91,6 @@ class OperationResponse
      * @Serializer\Type("string")
      */
     private $callbackUrl;
-
-
 
     /**
      * @return string

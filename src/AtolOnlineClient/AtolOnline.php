@@ -27,6 +27,10 @@ class AtolOnline
         return new Configuration();
     }
 
+    /**
+     * @param $response
+     * @return OperationResponse
+     */
     public function deserializeOperationResponse($response)
     {
         return $this->serializer->deserialize(
@@ -37,6 +41,10 @@ class AtolOnline
         );
     }
 
+    /**
+     * @param $response
+     * @return OperationResponse
+     */
     public function deserializeCheckStatusResponse($response)
     {
         return $this->serializer->deserialize(
@@ -47,6 +55,10 @@ class AtolOnline
         );
     }
 
+    /**
+     * @param $request
+     * @return mixed|string
+     */
     public function serializeOperationRequest($request)
     {
         return $this->serializer->serialize(
