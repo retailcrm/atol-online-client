@@ -15,7 +15,7 @@
         "guzzle/guzzle": "~3.7",
         "jms/serializer": "~0.12 || ~1.4.2",
         "symfony/validator": "2.8.*",
-        "doctrine/cache": "1.7.*",
+        "doctrine/cache": "~1.6",
         "psr/log": "~1.0"
     },
     "require-dev": {
