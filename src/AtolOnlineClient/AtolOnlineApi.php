@@ -208,7 +208,7 @@ class AtolOnlineApi
                     $this->logger->error($response->error->code . ' '. $response->error->text);
                 }
             } else {
-                if (isset($response->code) && $response->code == 1 || $response->code == 0) {
+                if (isset($response->code) && ($response->code == 1 || $response->code == 0)) {
                     $this->cache->save($this->getTokenCacheKey(), $response->token, self::TOKEN_CACHE_TIME);
 
                     return $response->token;
