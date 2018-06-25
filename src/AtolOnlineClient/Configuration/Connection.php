@@ -2,6 +2,7 @@
 
 namespace AtolOnlineClient\Configuration;
 
+use AtolOnlineClient\AtolOnlineApi;
 use Symfony\Component\Validator\Constraints as Assert;
 use Symfony\Component\Validator\Mapping\ClassMetadata;
 
@@ -151,5 +152,21 @@ class Connection
     public function getVersion()
     {
         return $this->version;
+    }
+
+    /**
+     * @return bool
+     */
+    public function isVersion3()
+    {
+        return $this->getVersion() === AtolOnlineApi::API_VERSION_V3;
+    }
+
+    /**
+     * @return bool
+     */
+    public function isVersion4()
+    {
+        return $this->getVersion() === AtolOnlineApi::API_VERSION_V4;
     }
 }
