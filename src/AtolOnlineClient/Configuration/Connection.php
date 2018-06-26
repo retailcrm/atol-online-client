@@ -15,13 +15,6 @@ class Connection
     const SNO_ESN = 'esn';
     const SNO_PATENT = 'patent';
 
-    const PLATFORMA_OFD = 'platforma_ofd';
-    const PERVIY_OFD = 'perviy_ofd';
-    const TAXCOM_OFD = 'taxcom_ofd';
-
-    const V3 = 'v3';
-    const V4 = 'v4';
-
     const snoTypes = [
         self::SNO_GENERAL,
         self::SNO_USN_INCOME,
@@ -31,19 +24,10 @@ class Connection
         self::SNO_PATENT,
     ];
 
-    const ofdList = [
-        self::PLATFORMA_OFD,
-        self::PERVIY_OFD,
-        self::TAXCOM_OFD,
-    ];
-
     const versions = [
-        self::V3,
-        self::V4,
+        AtolOnlineApi::API_VERSION_V3,
+        AtolOnlineApi::API_VERSION_V4,
     ];
-
-    /** @var string */
-    protected $url;
 
     /** @var bool */
     protected $debug = false;
@@ -57,14 +41,8 @@ class Connection
     /** @var string */
     public $group;
 
-    /** @var boolean */
-    public $enabled;
-
     /** @var string */
     public $sno;
-
-    /** @var string */
-    public $ofd;
 
     /** @var string */
     public $version;
@@ -117,33 +95,12 @@ class Connection
                 'choices'   => self::snoTypes,
             ])
         ]);
-        $metadata->addPropertyConstraints('ofd', [
-            new Assert\Choice([
-                'choices'   => self::ofdList,
-            ])
-        ]);
+
         $metadata->addPropertyConstraints('version', [
             new Assert\Choice([
                 'choices'   => self::versions,
             ])
         ]);
-    }
-
-    /**
-     * @return string
-     */
-    public function getOfdAddress()
-    {
-        switch ($this->ofd) {
-            case self::PLATFORMA_OFD:
-                return 'platformaofd.ru';
-            case self::PERVIY_OFD:
-                return 'www.1-ofd.ru';
-            case self::TAXCOM_OFD:
-                return 'taxcom.ru/ofd/';
-        }
-
-        return null;
     }
 
     /**

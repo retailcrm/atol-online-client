@@ -10,7 +10,6 @@ $connection = new \AtolOnlineClient\Configuration\Connection();
 $connection->version = \AtolOnlineClient\AtolOnlineApi::API_VERSION_V4;
 $connection->login = 'login';
 $connection->pass = 'pass';
-$connection->enabled = true;
 $connection->group = 'group';
 
 $config = new \AtolOnlineClient\Configuration();
