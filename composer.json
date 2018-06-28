@@ -2,7 +2,7 @@
     "name": "retailcrm/atol-online-client",
     "type": "library",
     "license": "proprietary",
-    "description": "Api client for Atol Online",
+    "description": "PHP API client for ATOL Online",
     "authors": [
         {
             "name": "retailCRM",
