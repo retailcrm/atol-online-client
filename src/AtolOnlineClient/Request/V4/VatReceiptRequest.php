@@ -39,10 +39,10 @@ class VatReceiptRequest
      * @param string $type
      * @param float $sum
      */
-    public function __construct(string $type, string $sum)
+    public function __construct(string $type, $sum)
     {
         $this->type = $type;
-        $this->sum = $sum;
+        $this->sum = (float) $sum;
     }
 
     /**
@@ -56,7 +56,7 @@ class VatReceiptRequest
     /**
      * @return float
      */
-    public function getSum(): string
+    public function getSum()
     {
         return $this->sum;
     }
