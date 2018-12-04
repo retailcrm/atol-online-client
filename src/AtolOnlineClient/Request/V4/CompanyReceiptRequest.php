@@ -19,7 +19,7 @@ class CompanyReceiptRequest
      * @var string
      * Поле необязательно, если у организации один тип налогообложения
      * @Serializer\Groups({"set", "get"})
-     * @Serializer\SerializedName("phone")
+     * @Serializer\SerializedName("sno")
      * @Serializer\Type("string")
      */
     private $sno;
