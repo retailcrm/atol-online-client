@@ -114,7 +114,6 @@ class AtolOnlineApi
         $url = $this->buildUrl('report/'.$uuid, $token);
         $request = $this->client->get($url);
 
-        $response = false;
         try {
             $this->attemptsCheckStatus++;
             $response = $request->send();
@@ -124,10 +123,12 @@ class AtolOnlineApi
             if ($this->isTokenExpired($body) && $this->attemptsCheckStatus <= 1) {
                 return $this->checkStatus($uuid);
             }
-            $this->logDebug($url, $uuid, $e->getResponse());
+            $response = $e->getResponse();
         }
 
         if ($response) {
+            $this->logDebug($url, $uuid, $response);
+
             return $response->getBody()->__toString();
         }
 
@@ -263,7 +264,6 @@ class AtolOnlineApi
         $url = $this->buildUrl($operation, $token);
 
         $request = $this->client->createRequest('POST', $url, null, $data);
-        $response = false;
         try {
             $this->attempts++;
             $response = $this->client->send($request);
@@ -273,8 +273,9 @@ class AtolOnlineApi
             if ($this->isTokenExpired($body) && $this->attempts <= 1) {
                 return $this->sendOperationRequest($operation, $data);
             }
-            $this->logDebug($url, $data, $e->getResponse());
+            $response = $e->getResponse();
         }
+
         if ($response) {
             $this->logDebug($url, $data, $response);
         }

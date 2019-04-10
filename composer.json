@@ -12,6 +12,7 @@
     "require": {
         "php": ">=7.1",
         "ext-curl": "*",
+        "ext-json": "*",
         "guzzle/guzzle": "~3.7",
         "jms/serializer": "~0.12 || ~1.4.2",
         "symfony/validator": "~2.8|~3.4|~4.0",
