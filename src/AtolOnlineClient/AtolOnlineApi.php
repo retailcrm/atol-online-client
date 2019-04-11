@@ -287,7 +287,7 @@ class AtolOnlineApi
     {
         if ($this->debug && $this->logger) {
             $v = "* URL: ".$url;
-            $v .= "\n * POSTFILEDS: ".$data;
+            $v .= "\n * POSTFIELDS: ".$data;
             $v .= "\n * RESPONSE HEADERS: ".$response->getRawHeaders();
             $v .= "\n * RESPONSE BODY: ".$response->getBody();
             $v .= "\n * ATTEMPTS: ".$this->attempts;
