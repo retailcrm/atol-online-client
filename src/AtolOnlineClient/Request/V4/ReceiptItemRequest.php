@@ -132,6 +132,14 @@ class ReceiptItemRequest
     private $vat;
 
     /**
+     * @var string
+     * @Serializer\Groups({"set", "get"})
+     * @Serializer\SerializedName("nomenclature_code")
+     * @Serializer\Type("string")
+     */
+    private $nomenclatureCode;
+
+    /**
      * @return string
      */
     public function getName(): string
@@ -257,5 +265,21 @@ class ReceiptItemRequest
     public function setVat(VatReceiptRequest $vat): void
     {
         $this->vat = $vat;
+    }
+
+    /**
+     * @return string
+     */
+    public function getNomenclatureCode(): string
+    {
+        return $this->nomenclatureCode;
+    }
+
+    /**
+     * @param string $nomenclatureCode
+     */
+    public function setNomenclatureCode(string $nomenclatureCode): void
+    {
+        $this->nomenclatureCode = $nomenclatureCode;
     }
 }
