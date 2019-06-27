@@ -94,7 +94,7 @@ class AtolOnlineApi
      */
     public function getVersion(): string
     {
-        return $this->connection->version;
+        return $this->connection->version ?: self::API_VERSION_V3;
     }
 
     /**
@@ -103,7 +103,7 @@ class AtolOnlineApi
      * @param $paymentReceiptRequest
      * @return string
      */
-    public function sell($paymentReceiptRequest): ?string
+    public function sell($paymentReceiptRequest)
     {
         return $this->sendOperationRequest('sell', $paymentReceiptRequest);
     }
@@ -114,7 +114,7 @@ class AtolOnlineApi
      * @param $paymentReceiptRequest
      * @return string
      */
-    public function sellRefund($paymentReceiptRequest): ?string
+    public function sellRefund($paymentReceiptRequest)
     {
         return $this->sendOperationRequest('sell_refund', $paymentReceiptRequest);
     }

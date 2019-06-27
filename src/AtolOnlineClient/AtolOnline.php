@@ -51,7 +51,7 @@ class AtolOnline
                 DeserializationContext::create()->setGroups(['post'])
             );
         } catch (RuntimeException $exception) {
-            throw new InvalidResponseException($exception->getMessage());
+            throw $this->createInvalidResponseException($response, $exception);
         }
     }
 
@@ -69,7 +69,7 @@ class AtolOnline
                 DeserializationContext::create()->setGroups(['get'])
             );
         } catch (RuntimeException $exception) {
-            throw new InvalidResponseException($exception->getMessage());
+            throw $this->createInvalidResponseException($response, $exception);
         }
     }
 
@@ -106,5 +106,27 @@ class AtolOnline
     public function getApi(): AtolOnlineApi
     {
         return $this->api;
+    }
+
+    /**
+     * @param string $response
+     * @param RuntimeException $previous
+     * @return InvalidResponseException
+     */
+    private function createInvalidResponseException(string $response, RuntimeException $previous): InvalidResponseException
+    {
+        $exception = new InvalidResponseException($previous->getMessage());
+
+        preg_match('/<head><title>(\d+) ([\w ]+)<\/title><\/head>/m', $response, $matches);
+
+        if (count($matches) === 3) {
+            [, $code, $message] = $matches;
+
+            $exception
+                ->setCodeError($code)
+                ->setMessageError($message);
+        }
+
+        return $exception;
     }
 }

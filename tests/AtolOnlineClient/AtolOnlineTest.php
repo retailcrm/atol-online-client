@@ -10,6 +10,7 @@ use AtolOnlineClient\Request\V4\PaymentReceiptRequest;
 use AtolOnlineClient\Request\V4\ReceiptRequest;
 use AtolOnlineClient\Request\V4\ServiceRequest;
 use GuzzleHttp\Client;
+use JMS\Serializer\Exception\RuntimeException;
 use JMS\Serializer\SerializerInterface;
 use PHPUnit\Framework\TestCase;
 
@@ -122,6 +123,26 @@ class AtolOnlineTest extends TestCase
     }
 
     /**
+     * @param int|null $code
+     * @param string|null $message
+     * @param string $html
+     * @covers       \AtolOnlineClient\AtolOnline::createInvalidResponseException
+     * @dataProvider dataInvalidResponse
+     */
+    public function testCreateInvalidResponseException(?int $code, ?string $message, string $html): void
+    {
+        /** @var InvalidResponseException $exception */
+        $exception = $this->callMethod($this->atol, 'createInvalidResponseException', [
+            'response' => $html,
+            'previous' => new RuntimeException()
+        ]);
+
+        $this->assertInstanceOf(InvalidResponseException::class, $exception);
+        $this->assertEquals($code, $exception->getCodeError());
+        $this->assertEquals($message, $exception->getMessageError());
+    }
+
+    /**
      * @covers \AtolOnlineClient\AtolOnline::serializeOperationRequest
      */
     public function testSerializeOperationRequest(): void
@@ -196,5 +217,49 @@ class AtolOnlineTest extends TestCase
             ['error_response_v3.json'],
             ['error_response_v4.json']
         ];
+    }
+
+    /**
+     * @return array
+     */
+    public function dataInvalidResponse(): array
+    {
+        return [
+            [
+                'code' => 404,
+                'message' => 'Not Found',
+                'html' => '<html><head><title>404 Not Found</title></head><body><center><h1>404 Not Found</h1></center><hr><center>openresty/1.15.8.1rc1</center></body></html>',
+            ],
+            [
+                'code' => 502,
+                'message' => 'Bad Gateway',
+                'html' => '<html><head><title>502 Bad Gateway</title></head><body><center><h1>502 Bad Gateway</h1></center><hr><center>nginx/1.15.8</center></body></html>',
+            ],
+            [
+                'code' => null,
+                'message' => null,
+                'html' => '<html></html>',
+            ],
+            [
+                'code' => null,
+                'message' => null,
+                'html' => '',
+            ],
+        ];
+    }
+
+    /**
+     * @param mixed $object
+     * @param string $name
+     * @param array $args
+     * @return mixed
+     */
+    private function callMethod($object, string $name, array $args = [])
+    {
+        $reflection = new \ReflectionClass($object);
+        $method = $reflection->getMethod($name);
+        $method->setAccessible(true);
+
+        return $method->invokeArgs($object, $args);
     }
 }
