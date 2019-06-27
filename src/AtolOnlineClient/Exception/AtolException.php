@@ -2,7 +2,8 @@
 
 namespace AtolOnlineClient\Exception;
 
-class AtolException extends \Exception
-{
+use Exception;
 
+class AtolException extends Exception
+{
 }

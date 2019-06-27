@@ -8,14 +8,20 @@ use Symfony\Component\Validator\Mapping\ClassMetadata;
 
 class Configuration implements ConfigurationInterface
 {
-    /** @var Connection[] */
+    /**
+     * @var Connection[]
+     */
     public $connections;
 
-    /** @var boolean */
-    public $enabled;
+    /**
+     * @var boolean
+     */
+    public $enabled = true;
 
-    /** @var bool */
-    public $debug;
+    /**
+     * @var bool
+     */
+    public $debug = false;
 
     /**
      * @param ClassMetadata $metadata
