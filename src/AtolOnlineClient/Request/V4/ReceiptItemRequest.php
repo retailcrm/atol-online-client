@@ -4,6 +4,9 @@ namespace AtolOnlineClient\Request\V4;
 
 use JMS\Serializer\Annotation as Serializer;
 
+/**
+ * @Serializer\AccessType("public_method")
+ */
 class ReceiptItemRequest
 {
 
@@ -68,7 +71,7 @@ class ReceiptItemRequest
     private $sum;
 
     /**
-     * @var string
+     * @var string|null
      *
      * required
      * @Serializer\Groups({"set", "get"})
@@ -88,7 +91,7 @@ class ReceiptItemRequest
      * «partial_payment» – частичный расчет и кредит. Частичная оплата предмета расчета в момент его передачи с последующей оплатой в кредит.
      * «credit» – передача в кредит. Передача предмета расчета без его оплаты в момент его передачи с последующей оплатой в кредит.
      * «credit_payment» – оплата кредита. Оплата предмета расчета после его передачи с оплатой в кредит (оплата кредита).
-     * @var string
+     * @var string|null
      *
      * @Serializer\Groups({"set", "get"})
      * @Serializer\SerializedName("payment_method")
@@ -113,7 +116,7 @@ class ReceiptItemRequest
      *  «composite» – составной предмет расчета. О предмете расчета, состоящем из предметов, каждому из которых может быть присвоено значение выше перечисленных признаков.
      *  «another» – иной предмет расчета. О предмете расчета, не относящемуся к выше перечисленным предметам расчета
      *
-     * @var string
+     * @var string|null
      *
      * @Serializer\Groups({"set", "get"})
      * @Serializer\SerializedName("payment_object")
@@ -132,7 +135,7 @@ class ReceiptItemRequest
     private $vat;
 
     /**
-     * @var string
+     * @var string|null
      * @Serializer\Groups({"set", "get"})
      * @Serializer\SerializedName("nomenclature_code")
      * @Serializer\Type("string")
@@ -204,49 +207,49 @@ class ReceiptItemRequest
     }
 
     /**
-     * @return string
+     * @return string|null
      */
-    public function getMeasurementUnit(): string
+    public function getMeasurementUnit(): ?string
     {
         return $this->measurementUnit;
     }
 
     /**
-     * @param string $measurementUnit
+     * @param string|null $measurementUnit
      */
-    public function setMeasurementUnit(string $measurementUnit): void
+    public function setMeasurementUnit(?string $measurementUnit): void
     {
         $this->measurementUnit = $measurementUnit;
     }
 
     /**
-     * @return string
+     * @return string|null
      */
-    public function getPaymentMethod(): string
+    public function getPaymentMethod(): ?string
     {
         return $this->paymentMethod;
     }
 
     /**
-     * @param string $paymentMethod
+     * @param string|null $paymentMethod
      */
-    public function setPaymentMethod(string $paymentMethod): void
+    public function setPaymentMethod(?string $paymentMethod): void
     {
         $this->paymentMethod = $paymentMethod;
     }
 
     /**
-     * @return string
+     * @return string|null
      */
-    public function getPaymentObject(): string
+    public function getPaymentObject(): ?string
     {
         return $this->paymentObject;
     }
 
     /**
-     * @param string $paymentObject
+     * @param string|null $paymentObject
      */
-    public function setPaymentObject(string $paymentObject): void
+    public function setPaymentObject(?string $paymentObject): void
     {
         $this->paymentObject = $paymentObject;
     }
@@ -268,17 +271,17 @@ class ReceiptItemRequest
     }
 
     /**
-     * @return string
+     * @return string|null
      */
-    public function getNomenclatureCode(): string
+    public function getNomenclatureCode(): ?string
     {
         return $this->nomenclatureCode;
     }
 
     /**
-     * @param string $nomenclatureCode
+     * @param string|null $nomenclatureCode
      */
-    public function setNomenclatureCode(string $nomenclatureCode): void
+    public function setNomenclatureCode(?string $nomenclatureCode): void
     {
         $this->nomenclatureCode = $nomenclatureCode;
     }

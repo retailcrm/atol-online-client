@@ -4,6 +4,9 @@ namespace AtolOnlineClient\Request\V4;
 
 use JMS\Serializer\Annotation as Serializer;
 
+/**
+ * @Serializer\AccessType("public_method")
+ */
 class ReceiptRequest
 {
 

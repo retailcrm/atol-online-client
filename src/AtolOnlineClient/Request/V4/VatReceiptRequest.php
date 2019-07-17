@@ -4,6 +4,9 @@ namespace AtolOnlineClient\Request\V4;
 
 use JMS\Serializer\Annotation as Serializer;
 
+/**
+ * @Serializer\AccessType("public_method")
+ */
 class VatReceiptRequest
 {
     /**
@@ -12,9 +15,9 @@ class VatReceiptRequest
      *   "none",
      *   "vat0",
      *   "vat10",
-     *   "vat18",
+     *   "vat20",
      *   "vat110",
-     *   "vat118"
+     *   "vat120"
      * ]
      *
      * @var string
@@ -26,8 +29,8 @@ class VatReceiptRequest
     private $type;
 
     /**
-     * @var float
-     * required
+     * @var float|null
+     *
      * @Serializer\Groups({"set", "get"})
      * @Serializer\SerializedName("sum")
      * @Serializer\Type("float")
@@ -54,10 +57,26 @@ class VatReceiptRequest
     }
 
     /**
+     * @param string $type
+     */
+    public function setType(string $type): void
+    {
+        $this->type = $type;
+    }
+
+    /**
      * @return float
      */
     public function getSum()
     {
         return $this->sum;
+    }
+
+    /**
+     * @param float $sum
+     */
+    public function setSum(float $sum): void
+    {
+        $this->sum = $sum;
     }
 }

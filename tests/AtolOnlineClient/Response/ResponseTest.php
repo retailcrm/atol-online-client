@@ -47,6 +47,7 @@ class ResponseTest extends TestCase
   "external_id": "TRF10601_1",
   "callback_url": ""
 }';
+        /** @var OperationResponse $response */
         $response = $serializer->deserialize(
             $response,
             OperationResponse::class,
@@ -58,6 +59,6 @@ class ResponseTest extends TestCase
             'json'
         );
 
-        $this->assertTrue(true);
+        $this->assertSame('4355', $response->getUuid());
     }
 }

@@ -25,7 +25,6 @@ class Connection
     ];
 
     const versions = [
-        AtolOnlineApi::API_VERSION_V3,
         AtolOnlineApi::API_VERSION_V4,
     ];
 
@@ -45,7 +44,7 @@ class Connection
     public $sno;
 
     /** @var string */
-    public $version = AtolOnlineApi::API_VERSION_V3;
+    public $version = AtolOnlineApi::API_VERSION_V4;
 
     /** @var bool */
     public $testMode = false;
@@ -53,7 +52,7 @@ class Connection
     /**
      * @return bool
      */
-    public function isTestMode()
+    public function isTestMode(): bool
     {
         return $this->testMode;
     }
@@ -61,7 +60,7 @@ class Connection
     /**
      * @param bool $testMode
      */
-    public function setTestMode(bool $testMode)
+    public function setTestMode(bool $testMode): void
     {
         $this->testMode = $testMode;
     }
@@ -85,7 +84,7 @@ class Connection
     /**
      * @param ClassMetadata $metadata
      */
-    public static function loadValidatorMetadata(ClassMetadata $metadata)
+    public static function loadValidatorMetadata(ClassMetadata $metadata): void
     {
         $metadata->addPropertyConstraint('login', new Assert\NotBlank());
         $metadata->addPropertyConstraint('pass', new Assert\NotBlank());
@@ -109,14 +108,6 @@ class Connection
     public function getVersion()
     {
         return $this->version;
-    }
-
-    /**
-     * @return bool
-     */
-    public function isVersion3()
-    {
-        return $this->getVersion() === AtolOnlineApi::API_VERSION_V3;
     }
 
     /**
