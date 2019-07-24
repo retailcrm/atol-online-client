@@ -1,5 +1,4 @@
 [![Build Status](https://img.shields.io/travis/retailcrm/atol-online-client/master.svg?style=flat-square)](https://travis-ci.org/retailcrm/atol-online-client)
-
 [![Latest stable](https://img.shields.io/packagist/v/retailcrm/atol-online-client.svg?style=flat-square)](https://packagist.org/packages/retailcrm/atol-online-client)
 
 # API-клиент для АТОЛ.Онлайн
