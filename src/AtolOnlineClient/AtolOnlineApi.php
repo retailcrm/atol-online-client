@@ -4,36 +4,29 @@ namespace AtolOnlineClient;
 
 use AtolOnlineClient\Configuration\Connection;
 use Doctrine\Common\Cache\Cache;
-
-use Guzzle\Http\Client;
-
-use Guzzle\Http\Exception\BadResponseException;
-use Guzzle\Http\Message\Response;
+use GuzzleHttp\Client;
+use GuzzleHttp\Exception\BadResponseException;
+use Psr\Http\Message\ResponseInterface;
 use Psr\Log\LoggerInterface;
 
 class AtolOnlineApi
 {
+    public const API_VERSION_V4 = 'v4';
+    public const API_VERSION_V3 = 'v3';
 
-    const API_VERSION_V4 = 'v4';
-    const API_VERSION_V3 = 'v3';
-
-    const TOKEN_CACHE_KEY = 'crm_fiscal_atol_online_token';
-    const TOKEN_CACHE_TIME = 60 * 60 * 24;
+    public const TOKEN_CACHE_KEY = 'crm_fiscal_atol_online_token';
+    public const TOKEN_CACHE_TIME = 86400;
 
     private $baseApiUrl = 'https://online.atol.ru/possystem';
-
-    private $login;
-    private $pass;
-    private $groupCode;
-    private $debug;
+    private $testApiUrl = 'https://testonline.atol.ru/possystem';
 
     /**
-     * @var LoggerInterface
+     * @var LoggerInterface|null
      */
     private $logger;
 
     /**
-     * @var Cache
+     * @var Cache|null
      */
     private $cache;
 
@@ -41,6 +34,11 @@ class AtolOnlineApi
      * @var Client
      */
     private $client;
+
+    /**
+     * @var Connection
+     */
+    private $connection;
 
     /**
      * @var int
@@ -52,9 +50,6 @@ class AtolOnlineApi
      */
     private $attemptsCheckStatus;
 
-    /** @var string  */
-    private $version;
-
     /**
      * @param Client $client
      * @param Connection $connectionConfig
@@ -62,18 +57,44 @@ class AtolOnlineApi
     public function __construct(Client $client, Connection $connectionConfig)
     {
         $this->client = $client;
-        $this->login = $connectionConfig->login;
-        $this->pass = $connectionConfig->pass;
-        $this->groupCode = $connectionConfig->group;
-        if (!$connectionConfig->version) {
-            $connectionConfig->version = self::API_VERSION_V3;
-        }
-        $this->version = $connectionConfig->version;
-        $this->debug = $connectionConfig->isDebug();
+        $this->connection = $connectionConfig;
+
         $this->attempts = 0;
-        if ($connectionConfig->isTestMode()) {
-            $this->baseApiUrl = 'https://testonline.atol.ru/possystem';
-        }
+    }
+
+    /**
+     * @param LoggerInterface $logger
+     */
+    public function setLogger(LoggerInterface $logger): void
+    {
+        $this->logger = $logger;
+    }
+
+    /**
+     * @param Cache $cache
+     */
+    public function setCache(Cache $cache): void
+    {
+        $this->cache = $cache;
+    }
+
+    /**
+     * @param string $version
+     * @return AtolOnlineApi
+     */
+    public function setVersion(string $version): AtolOnlineApi
+    {
+        $this->connection->version = $version;
+
+        return $this;
+    }
+
+    /**
+     * @return string
+     */
+    public function getVersion(): string
+    {
+        return $this->connection->version ?: self::API_VERSION_V3;
     }
 
     /**
@@ -84,9 +105,7 @@ class AtolOnlineApi
      */
     public function sell($paymentReceiptRequest)
     {
-        if ($response = $this->sendOperationRequest('sell', $paymentReceiptRequest)) {
-            return $response->getBody()->__toString();
-        };
+        return $this->sendOperationRequest('sell', $paymentReceiptRequest);
     }
 
     /**
@@ -97,74 +116,48 @@ class AtolOnlineApi
      */
     public function sellRefund($paymentReceiptRequest)
     {
-        if ($response = $this->sendOperationRequest('sell_refund', $paymentReceiptRequest)) {
-            return $response->getBody()->__toString();
-        };
+        return $this->sendOperationRequest('sell_refund', $paymentReceiptRequest);
     }
 
     /**
      * Запрос для проверки статуса
      *
-     * @param $uuid
+     * @param string $uuid
      * @return mixed
      */
     public function checkStatus($uuid)
     {
         $token = $this->getToken();
+
         $url = $this->buildUrl('report/'.$uuid, $token);
-        $request = $this->client->get($url);
 
         try {
             $this->attemptsCheckStatus++;
-            $response = $request->send();
-        } catch (BadResponseException $e) {
-            $this->cache->delete($this->getTokenCacheKey());
-            $body = json_decode($e->getResponse()->getBody());
-            if ($this->isTokenExpired($body) && $this->attemptsCheckStatus <= 1) {
+            $response = $this->client->get($url);
+        } catch (BadResponseException $exception) {
+            if ($this->cache) {
+                $this->cache->delete($this->getTokenCacheKey());
+            }
+
+            $response = $exception->getResponse();
+            $body = json_decode($response->getBody(), false);
+
+            if ($this->attemptsCheckStatus <= 1 && $this->isTokenExpired($body)) {
                 return $this->checkStatus($uuid);
             }
-            $response = $e->getResponse();
         }
 
-        if ($response) {
-            $this->logDebug($url, $uuid, $response);
+        $this->logDebug($url, $uuid, $response);
 
-            return $response->getBody()->__toString();
-        }
-
-        return false;
-    }
-
-    /**
-     * @param $logger
-     */
-    public function setLogger(LoggerInterface $logger)
-    {
-        $this->logger = $logger;
-    }
-
-    /**
-     * @param Cache $cache
-     */
-    public function setCache(Cache $cache)
-    {
-        $this->cache = $cache;
-    }
-
-    /**
-     * @param mixed $version
-     */
-    public function setVersion($version): void
-    {
-        $this->version = $version;
+        return $response->getBody()->__toString();
     }
 
     /**
      * @return string
      */
-    public function getVersion(): string
+    protected function getUri(): string
     {
-        return $this->version;
+        return $this->connection->isTestMode() ? $this->testApiUrl : $this->baseApiUrl;
     }
 
     /**
@@ -174,48 +167,53 @@ class AtolOnlineApi
     protected function getToken()
     {
         $data = [
-            'login' => $this->login,
-            'pass' => $this->pass,
+            'login' => $this->connection->login,
+            'pass' => $this->connection->pass,
         ];
 
-        if ($token = $this->cache->fetch($this->getTokenCacheKey())) {
+        if ($this->cache && ($token = $this->cache->fetch($this->getTokenCacheKey()))) {
             return $token;
         }
 
         $dataJson = json_encode((object)$data, JSON_UNESCAPED_UNICODE);
-        $url = $this->baseApiUrl
-            .'/'.$this->version
-            .'/getToken';
 
-        $request = $this->client->createRequest('POST', $url, null, $dataJson);
+        $url = $this->getUri().'/'.$this->connection->version.'/getToken';
+
         $response = false;
         try {
-            $response = $this->client->send($request);
-        } catch (BadResponseException $e) {
-            if ($this->logger) {
-                $this->logger->error($e->getResponse()->getBody());
+            $response = $this->client->post($url, ['body' => $dataJson]);
+        } catch (BadResponseException $exception) {
+            if ($this->logger && $exception->getResponse()) {
+                $this->logger->error((string) $exception->getResponse()->getBody());
             }
         }
 
         if ($response) {
-            $response = json_decode($response->getBody());
+            $response = json_decode($response->getBody(), true);
 
-            if ($this->version === self::API_VERSION_V4) {
-                if (!isset ($response->error)) {
-                    $this->cache->save($this->getTokenCacheKey(), $response->token, self::TOKEN_CACHE_TIME);
-
-                    return $response->token;
-                } else {
-                    $this->logger->error($response->error->code . ' '. $response->error->text);
+            if ($this->connection->isVersion4()) {
+                if ($this->cache && !isset($response['error'])) {
+                    $this->cache->save($this->getTokenCacheKey(), $response['token'], self::TOKEN_CACHE_TIME);
                 }
-            } else {
-                if (isset($response->code) && ($response->code == 1 || $response->code == 0)) {
-                    $this->cache->save($this->getTokenCacheKey(), $response->token, self::TOKEN_CACHE_TIME);
 
-                    return $response->token;
+                if ($this->logger && isset($response['error'])) {
+                    $this->logger->error($response['error']['code'] . ' '. $response['error']['text']);
                 }
+
+                if (!isset($response['error'])) {
+                    return $response['token'];
+                }
+
+               return false;
             }
 
+            if (isset($response['code']) && in_array($response['code'], [0, 1], true)) {
+                if ($this->cache) {
+                    $this->cache->save($this->getTokenCacheKey(), $response['token'], self::TOKEN_CACHE_TIME);
+                }
+
+                return $response['token'];
+            }
         }
 
 
@@ -223,85 +221,100 @@ class AtolOnlineApi
     }
 
     /**
-     * @return string
-     */
-    protected function getTokenCacheKey()
-    {
-        return self::TOKEN_CACHE_KEY.'_'.md5($this->login.$this->pass).'_'.$this->version;
-    }
-
-    /**
      * @param string $operation
-     * @param null $token
+     * @param string|null $token
      * @return string
      */
-    protected function buildUrl($operation, $token = null)
+    protected function buildUrl(string $operation, string $token = null): string
     {
-        $url = $this->baseApiUrl
-            .'/'.$this->version
-            .'/'.$this->groupCode
+        $url = $this->getUri()
+            .'/'.$this->connection->version
+            .'/'.$this->connection->group
             .'/'.$operation;
 
-        if ($token) {
-            if ($this->version === self::API_VERSION_V4) {
-                $url .= '?token='.$token;
-            } elseif ($this->version === self::API_VERSION_V3) {
-                $url .= '?tokenid='.$token;
-            }
+        if (!$token) {
+            return $url;
         }
 
-        return $url;
+        if ($this->getVersion() === self::API_VERSION_V4) {
+            return $url.'?token='.$token;
+        }
+
+        return $url.'?tokenid='.$token;
     }
 
     /**
      * @param string $operation
-     * @param string $data
-     * @return Response|bool
+     * @param mixed $data
+     * @return string
      */
-    protected function sendOperationRequest($operation, $data)
+    protected function sendOperationRequest(string $operation, $data): string
     {
         $token = $this->getToken();
+
         $url = $this->buildUrl($operation, $token);
 
-        $request = $this->client->createRequest('POST', $url, null, $data);
         try {
             $this->attempts++;
-            $response = $this->client->send($request);
+            $response = $this->client->post($url, ['body' => $data]);
         } catch (BadResponseException $e) {
-            $this->cache->delete($this->getTokenCacheKey());
-            $body = json_decode($e->getResponse()->getBody());
+            if ($this->cache) {
+                $this->cache->delete($this->getTokenCacheKey());
+            }
+
+            $response = $e->getResponse();
+
+            $body = json_decode($response->getBody()->__toString(), false);
+
             if ($this->isTokenExpired($body) && $this->attempts <= 1) {
                 return $this->sendOperationRequest($operation, $data);
             }
-            $response = $e->getResponse();
         }
 
         if ($response) {
             $this->logDebug($url, $data, $response);
         }
 
-        return $response;
+        return $response->getBody()->__toString();
     }
 
-    protected function logDebug($url, $data, Response $response)
+    /**
+     * @param string $url
+     * @param string $data
+     * @param ResponseInterface $response
+     */
+    protected function logDebug(string $url, string $data, ResponseInterface $response): void
     {
-        if ($this->debug && $this->logger) {
-            $v = "* URL: ".$url;
+        if ($this->logger && $this->connection->isDebug()) {
+            $headers = [];
+
+            foreach ($response->getHeaders() as $key => $value) {
+                $headers[] = implode(': ', [$key, $value[0]]);
+            }
+
+            $v = '* URL: '.$url;
             $v .= "\n * POSTFIELDS: ".$data;
-            $v .= "\n * RESPONSE HEADERS: ".$response->getRawHeaders();
+            $v .= "\n * RESPONSE HEADERS: ".implode(', ', $headers);
             $v .= "\n * RESPONSE BODY: ".$response->getBody();
             $v .= "\n * ATTEMPTS: ".$this->attempts;
             $this->logger->debug($v);
         }
     }
 
-    protected function isTokenExpiredCode($code)
+    /**
+     * @return string
+     */
+    protected function getTokenCacheKey(): string
     {
-        return in_array($code, [4, 5, 6, 12, 13, 14]);
+        return self::TOKEN_CACHE_KEY.'_'.md5($this->connection->login.$this->connection->pass).'_'.$this->connection->version;
     }
 
-    private function isTokenExpired($body)
+    /**
+     * @param object $body
+     * @return bool
+     */
+    private function isTokenExpired($body): bool
     {
-        return isset($body->error) && $this->isTokenExpiredCode($body->error->code);
+        return isset($body->error) && in_array($body->error->code, [4, 5, 6, 12, 13, 14], true);
     }
 }

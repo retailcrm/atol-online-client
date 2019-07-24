@@ -45,7 +45,7 @@ class Connection
     public $sno;
 
     /** @var string */
-    public $version;
+    public $version = AtolOnlineApi::API_VERSION_V3;
 
     /** @var bool */
     public $testMode = false;

@@ -4,6 +4,9 @@ namespace AtolOnlineClient\Response;
 
 use JMS\Serializer\Annotation as Serializer;
 
+/**
+ * @Serializer\AccessType("public_method")
+ */
 class Error
 {
 
