@@ -1,3 +1,5 @@
+[![Build Status](https://img.shields.io/travis/retailcrm/atol-online-client/master.svg?style=flat-square)](https://travis-ci.org/retailcrm/atol-online-client)
+
 # API-клиент для АТОЛ.Онлайн
 
 API-клиент на PHP для сервиса онлайн-фискализации платежей АТОЛ.Онлайн.
