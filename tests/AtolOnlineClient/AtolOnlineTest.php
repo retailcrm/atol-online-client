@@ -3,12 +3,10 @@
 namespace AtolOnlineClient\Tests;
 
 use AtolOnlineClient\AtolOnline;
+use AtolOnlineClient\AtolOnlineClient\Traits\PaymentReceiptRequestTrait;
 use AtolOnlineClient\Configuration\Connection;
 use AtolOnlineClient\ConfigurationInterface;
 use AtolOnlineClient\Exception\InvalidResponseException;
-use AtolOnlineClient\Request\V4\PaymentReceiptRequest;
-use AtolOnlineClient\Request\V4\ReceiptRequest;
-use AtolOnlineClient\Request\V4\ServiceRequest;
 use GuzzleHttp\Client;
 use JMS\Serializer\Exception\RuntimeException;
 use JMS\Serializer\SerializerInterface;
@@ -16,6 +14,8 @@ use PHPUnit\Framework\TestCase;
 
 class AtolOnlineTest extends TestCase
 {
+    use PaymentReceiptRequestTrait;
+
     /**
      * @var AtolOnline
      */
@@ -127,6 +127,7 @@ class AtolOnlineTest extends TestCase
      * @param string|null $message
      * @param string $html
      * @covers       \AtolOnlineClient\AtolOnline::createInvalidResponseException
+     * @covers       \AtolOnlineClient\Exception\InvalidResponseException
      * @dataProvider dataInvalidResponse
      */
     public function testCreateInvalidResponseException(?int $code, ?string $message, string $html): void
@@ -144,30 +145,24 @@ class AtolOnlineTest extends TestCase
 
     /**
      * @covers \AtolOnlineClient\AtolOnline::serializeOperationRequest
+     * @covers \AtolOnlineClient\Request\V4\ClientReceiptRequest
+     * @covers \AtolOnlineClient\Request\V4\CompanyReceiptRequest
+     * @covers \AtolOnlineClient\Request\V4\PaymentReceiptRequest
+     * @covers \AtolOnlineClient\Request\V4\ReceiptItemRequest
+     * @covers \AtolOnlineClient\Request\V4\ReceiptPaymentRequest
+     * @covers \AtolOnlineClient\Request\V4\ReceiptRequest
+     * @covers \AtolOnlineClient\Request\V4\ServiceRequest
+     * @covers \AtolOnlineClient\Request\V4\VatReceiptRequest
      */
     public function testSerializeOperationRequest(): void
     {
-        $service = new ServiceRequest();
-        $service->setCallbackUrl('test.local');
+        $request = $this->getPaymentReceiptRequest();
+        $request->setTimestamp('17.07.2019 10:14:22');
 
-        $receipt = new ReceiptRequest();
-        $receipt->setTotal('100');
-
-        /** @var PaymentReceiptRequest $paymentReceipt */
-        $paymentReceipt = new PaymentReceiptRequest();
-
-        $reflection = new \ReflectionClass($paymentReceipt);
-        $property = $reflection->getProperty('timestamp');
-        $property->setAccessible(true);
-        $property->setValue($paymentReceipt, 1);
-
-        $paymentReceipt->setExternalId('test');
-        $paymentReceipt->setService($service);
-        $paymentReceipt->setReceipt($receipt);
-
-        $request = $this->atol->serializeOperationRequest($paymentReceipt);
-
-        $this->assertEquals('{"external_id":"test","receipt":{"total":100},"timestamp":"1","service":{"callback_url":"test.local"}}', $request);
+        $this->assertEquals(
+            '{"external_id":"test","receipt":{"client":{"email":"test@test.local"},"company":{"email":"test@test.local","inn":"11111111","payment_address":"address"},"items":[{"name":"test item","price":100,"quantity":1,"sum":100,"measurement_unit":"kg","payment_method":"advance","payment_object":"agent_commission","vat":{"type":"vat20","sum":20},"nomenclature_code":"00"}],"payments":[{"type":0,"sum":100}],"vats":[{"type":"vat20","sum":20}],"total":100},"timestamp":"17.07.2019 10:14:22","service":{"callback_url":"test.local"}}',
+            $this->atol->serializeOperationRequest($request)
+        );
     }
 
     /**
@@ -214,7 +209,6 @@ class AtolOnlineTest extends TestCase
     public function dataErrorResponse(): array
     {
         return [
-            ['error_response_v3.json'],
             ['error_response_v4.json']
         ];
     }

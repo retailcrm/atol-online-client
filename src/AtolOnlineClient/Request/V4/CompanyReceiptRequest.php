@@ -4,6 +4,9 @@ namespace AtolOnlineClient\Request\V4;
 
 use JMS\Serializer\Annotation as Serializer;
 
+/**
+ * @Serializer\AccessType("public_method")
+ */
 class CompanyReceiptRequest
 {
     /**
@@ -16,7 +19,7 @@ class CompanyReceiptRequest
     private $email;
 
     /**
-     * @var string
+     * @var string|null
      * Поле необязательно, если у организации один тип налогообложения
      * @Serializer\Groups({"set", "get"})
      * @Serializer\SerializedName("sno")
@@ -59,17 +62,17 @@ class CompanyReceiptRequest
     }
 
     /**
-     * @return string
+     * @return string|null
      */
-    public function getSno(): string
+    public function getSno(): ?string
     {
         return $this->sno;
     }
 
     /**
-     * @param string $sno
+     * @param string|null $sno
      */
-    public function setSno(string $sno): void
+    public function setSno(?string $sno): void
     {
         $this->sno = $sno;
     }

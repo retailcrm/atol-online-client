@@ -12,7 +12,6 @@ use Psr\Log\LoggerInterface;
 class AtolOnlineApi
 {
     public const API_VERSION_V4 = 'v4';
-    public const API_VERSION_V3 = 'v3';
 
     public const TOKEN_CACHE_KEY = 'crm_fiscal_atol_online_token';
     public const TOKEN_CACHE_TIME = 86400;
@@ -94,7 +93,7 @@ class AtolOnlineApi
      */
     public function getVersion(): string
     {
-        return $this->connection->version ?: self::API_VERSION_V3;
+        return $this->connection->version ?: self::API_VERSION_V4;
     }
 
     /**
@@ -191,31 +190,18 @@ class AtolOnlineApi
         if ($response) {
             $response = json_decode($response->getBody(), true);
 
-            if ($this->connection->isVersion4()) {
-                if ($this->cache && !isset($response['error'])) {
-                    $this->cache->save($this->getTokenCacheKey(), $response['token'], self::TOKEN_CACHE_TIME);
-                }
-
-                if ($this->logger && isset($response['error'])) {
-                    $this->logger->error($response['error']['code'] . ' '. $response['error']['text']);
-                }
-
-                if (!isset($response['error'])) {
-                    return $response['token'];
-                }
-
-               return false;
+            if ($this->cache && !isset($response['error'])) {
+                $this->cache->save($this->getTokenCacheKey(), $response['token'], self::TOKEN_CACHE_TIME);
             }
 
-            if (isset($response['code']) && in_array($response['code'], [0, 1], true)) {
-                if ($this->cache) {
-                    $this->cache->save($this->getTokenCacheKey(), $response['token'], self::TOKEN_CACHE_TIME);
-                }
+            if ($this->logger && isset($response['error'])) {
+                $this->logger->error($response['error']['code'] . ' '. $response['error']['text']);
+            }
 
+            if (!isset($response['error'])) {
                 return $response['token'];
             }
         }
-
 
         return false;
     }
@@ -236,11 +222,7 @@ class AtolOnlineApi
             return $url;
         }
 
-        if ($this->getVersion() === self::API_VERSION_V4) {
-            return $url.'?token='.$token;
-        }
-
-        return $url.'?tokenid='.$token;
+        return $url.'?token='.$token;
     }
 
     /**

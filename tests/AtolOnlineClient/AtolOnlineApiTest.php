@@ -4,10 +4,8 @@ namespace AtolOnlineClient\AtolOnlineClient;
 
 use AtolOnlineClient\AtolOnline;
 use AtolOnlineClient\AtolOnlineApi;
+use AtolOnlineClient\AtolOnlineClient\Traits\PaymentReceiptRequestTrait;
 use AtolOnlineClient\Configuration\Connection;
-use AtolOnlineClient\Request\V4\PaymentReceiptRequest;
-use AtolOnlineClient\Request\V4\ReceiptRequest;
-use AtolOnlineClient\Request\V4\ServiceRequest;
 use Doctrine\Common\Cache\ArrayCache;
 use GuzzleHttp\Client;
 use GuzzleHttp\Exception\BadResponseException;
@@ -26,6 +24,8 @@ use Psr\Log\Test\TestLogger;
  */
 class AtolOnlineApiTest extends TestCase
 {
+    use PaymentReceiptRequestTrait;
+
     /**
      * @return void
      * @covers \AtolOnlineClient\AtolOnlineApi::__construct
@@ -39,8 +39,6 @@ class AtolOnlineApiTest extends TestCase
         $api = new AtolOnlineApi(new Client(), new Connection());
 
         $this->assertInstanceOf(AtolOnlineApi::class, $api);
-
-        $this->assertSame(AtolOnlineApi::API_VERSION_V3, $api->getVersion());
 
         $api->setVersion(AtolOnlineApi::API_VERSION_V4);
         $this->assertSame(AtolOnlineApi::API_VERSION_V4, $api->getVersion());
@@ -63,7 +61,7 @@ class AtolOnlineApiTest extends TestCase
             new Response(200, [], $this->getReportSuccessReportV4()),
         ];
 
-        $request = (new AtolOnline())->serializeOperationRequest($this->getPaymentRecepientRequest());
+        $request = (new AtolOnline())->serializeOperationRequest($this->getPaymentReceiptRequest());
 
         $response = $this->getApi($responses)->sell($request);
 
@@ -81,7 +79,7 @@ class AtolOnlineApiTest extends TestCase
             new Response(200, [], $this->getReportSuccessReportV4()),
         ];
 
-        $request = (new AtolOnline())->serializeOperationRequest($this->getPaymentRecepientRequest());
+        $request = (new AtolOnline())->serializeOperationRequest($this->getPaymentReceiptRequest());
 
         $response = $this->getApi($responses)->sellRefund($request);
 
@@ -210,34 +208,6 @@ class AtolOnlineApiTest extends TestCase
 
     /**
      * @return void
-     * @covers \AtolOnlineClient\AtolOnlineApi::getToken
-     */
-    public function testGetTokenSuccessResponseV3(): void
-    {
-        $api = $this->getApi([new Response(200, [], $this->getTokenSuccessResponseV3())])->setVersion(AtolOnlineApi::API_VERSION_V3);
-
-        $this->assertSame('fj45u923j59ju42395iu9423i59243u0', $this->callMethod($api, 'getToken'));
-    }
-
-    /**
-     * @return void
-     * @covers \AtolOnlineClient\AtolOnlineApi::getToken
-     */
-    public function testGetTokenSuccessResponseV3WithCache(): void
-    {
-        $cache = new ArrayCache();
-
-        $api = $this->getApi([new Response(200, [], $this->getTokenSuccessResponseV3())])->setVersion(AtolOnlineApi::API_VERSION_V3);
-        $api->setCache($cache);
-
-        $this->assertSame('fj45u923j59ju42395iu9423i59243u0', $this->callMethod($api, 'getToken'));
-        $this->assertTrue($cache->contains($this->callMethod($api, 'getTokenCacheKey')));
-
-        $this->assertSame('fj45u923j59ju42395iu9423i59243u0', $this->callMethod($api, 'getToken'));
-    }
-
-    /**
-     * @return void
      * @covers \AtolOnlineClient\AtolOnlineApi::buildUrl
      */
     public function testBuildUrlWithoutToken(): void
@@ -245,7 +215,6 @@ class AtolOnlineApiTest extends TestCase
         $args = ['operation' => 'test'];
 
         $this->assertSame('https://online.atol.ru/possystem/v4/group/test', $this->callMethod($this->getApi(), 'buildUrl', $args));
-        $this->assertSame('https://online.atol.ru/possystem/v3/group/test', $this->callMethod($this->getApi()->setVersion(AtolOnlineApi::API_VERSION_V3), 'buildUrl', $args));
     }
 
     /**
@@ -257,7 +226,6 @@ class AtolOnlineApiTest extends TestCase
         $args = ['operation' => 'test', 'token' => 'test'];
 
         $this->assertSame('https://online.atol.ru/possystem/v4/group/test?token=test', $this->callMethod($this->getApi(), 'buildUrl', $args));
-        $this->assertSame('https://online.atol.ru/possystem/v3/group/test?tokenid=test', $this->callMethod($this->getApi()->setVersion(AtolOnlineApi::API_VERSION_V3), 'buildUrl', $args));
     }
 
     /**
@@ -271,7 +239,7 @@ class AtolOnlineApiTest extends TestCase
             new Response(200, [], $this->getTokenSuccessResponseV4())
         ];
 
-        $request = (new AtolOnline())->serializeOperationRequest($this->getPaymentRecepientRequest());
+        $request = (new AtolOnline())->serializeOperationRequest($this->getPaymentReceiptRequest());
 
         $response = $this->callMethod($this->getApi($responses), 'sendOperationRequest', [
             'operation' => 'sell',
@@ -294,7 +262,7 @@ class AtolOnlineApiTest extends TestCase
             new Response(200, [], $this->getTokenSuccessResponseV4()),
         ];
 
-        $request = (new AtolOnline())->serializeOperationRequest($this->getPaymentRecepientRequest());
+        $request = (new AtolOnline())->serializeOperationRequest($this->getPaymentReceiptRequest());
 
         $api = $this->getApi($responses);
         $api->setCache(new ArrayCache());
@@ -338,7 +306,6 @@ class AtolOnlineApiTest extends TestCase
     public function testGetTokenCacheKey(): void
     {
         $this->assertSame('crm_fiscal_atol_online_token_68526766e6751745b52ae70b7bd3c6fe_v4', $this->callMethod($this->getApi(), 'getTokenCacheKey'));
-        $this->assertSame('crm_fiscal_atol_online_token_68526766e6751745b52ae70b7bd3c6fe_v3', $this->callMethod($this->getApi()->setVersion(AtolOnlineApi::API_VERSION_V3), 'getTokenCacheKey'));
     }
 
     /**
@@ -413,17 +380,6 @@ class AtolOnlineApiTest extends TestCase
     /**
      * @return false|string
      */
-    private function getTokenSuccessResponseV3()
-    {
-        return json_encode([
-            'token' => 'fj45u923j59ju42395iu9423i59243u0',
-            'code' => 1,
-        ]);
-    }
-
-    /**
-     * @return false|string
-     */
     private function getTokenSuccessResponseV4()
     {
         return json_encode([
@@ -455,25 +411,5 @@ class AtolOnlineApiTest extends TestCase
     private function getReportSuccessReportV4(): string
     {
         return file_get_contents(__DIR__.'/../fixtures/success_response_v4_3.json');
-    }
-
-    /**
-     * @return PaymentReceiptRequest
-     */
-    private function getPaymentRecepientRequest(): PaymentReceiptRequest
-    {
-        $service = new ServiceRequest();
-        $service->setCallbackUrl('test.local');
-
-        $receipt = new ReceiptRequest();
-        $receipt->setTotal('100');
-
-        /** @var PaymentReceiptRequest $request */
-        $request = new PaymentReceiptRequest();
-        $request->setExternalId('test');
-        $request->setService($service);
-        $request->setReceipt($receipt);
-
-        return $request;
     }
 }
