@@ -226,7 +226,7 @@ class OperationResponse
     /**
      * @param string $groupCode
      */
-    public function setGroupCode(string $groupCode)
+    public function setGroupCode(?string $groupCode)
     {
         $this->groupCode = $groupCode;
     }
@@ -242,7 +242,7 @@ class OperationResponse
     /**
      * @param string $daemonCode
      */
-    public function setDaemonCode(string $daemonCode)
+    public function setDaemonCode(?string $daemonCode)
     {
         $this->daemonCode = $daemonCode;
     }
@@ -258,7 +258,7 @@ class OperationResponse
     /**
      * @param string $deviceCode
      */
-    public function setDeviceCode(string $deviceCode)
+    public function setDeviceCode(?string $deviceCode)
     {
         $this->deviceCode = $deviceCode;
     }
