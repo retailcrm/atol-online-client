@@ -90,6 +90,16 @@ class Payload
     private $fiscalDocumentAttribute;
 
     /**
+     * Адрес сайта ФНС
+     *
+     * @var string
+     * @Serializer\Groups({"get"})
+     * @Serializer\SerializedName("fns_site")
+     * @Serializer\Type("string")
+     */
+    private $fnsSite;
+
+    /**
      * @return mixed
      */
     public function getFiscalReceiptNumber()
@@ -245,6 +255,26 @@ class Payload
     public function setFiscalDocumentAttribute($fiscalDocumentAttribute)
     {
         $this->fiscalDocumentAttribute = $fiscalDocumentAttribute;
+
+        return $this;
+    }
+
+    /**
+     * @return string
+     */
+    public function getFnsSite()
+    {
+        return $this->fnsSite;
+    }
+
+    /**
+     * @param $string $fnsSite
+     *
+     * @return $this
+     */
+    public function setFnsSite($fnsSite)
+    {
+        $this->fnsSite = $fnsSite;
 
         return $this;
     }
