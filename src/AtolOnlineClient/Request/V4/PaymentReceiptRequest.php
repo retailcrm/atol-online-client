@@ -4,6 +4,9 @@ namespace AtolOnlineClient\Request\V4;
 
 use JMS\Serializer\Annotation as Serializer;
 
+/**
+ * @Serializer\AccessType("public_method")
+ */
 class PaymentReceiptRequest
 {
     /**
@@ -42,7 +45,6 @@ class PaymentReceiptRequest
      * @Serializer\Type("AtolOnlineClient\Request\V4\ServiceRequest")
      */
     private $service;
-
 
 
     public function __construct()
@@ -88,6 +90,14 @@ class PaymentReceiptRequest
     public function getTimestamp(): string
     {
         return $this->timestamp;
+    }
+
+    /**
+     * @param string $timestamp
+     */
+    public function setTimestamp(string $timestamp): void
+    {
+        $this->timestamp = $timestamp;
     }
 
     /**

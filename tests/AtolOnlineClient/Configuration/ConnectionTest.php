@@ -52,13 +52,9 @@ class ConnectionTest extends TestCase
      * @return void
      * @covers \AtolOnlineClient\Configuration\Connection::getVersion
      * @covers \AtolOnlineClient\Configuration\Connection::isVersion4
-     * @covers \AtolOnlineClient\Configuration\Connection::isVersion3
      */
     public function testVersion(): void
     {
-        $this->assertEquals(AtolOnlineApi::API_VERSION_V3, $this->connection->getVersion());
-        $this->assertTrue($this->connection->isVersion3());
-
         $this->connection->version = AtolOnlineApi::API_VERSION_V4;
         $this->assertTrue($this->connection->isVersion4());
     }

@@ -7,12 +7,12 @@ use JMS\Serializer\Annotation as Serializer;
 /**
  * В запросе обязательно должно быть заполнено хотя бы одно из полей: email или phone.
  * Если заполнены оба поля, ОФД отправит электронный чек только на email.
+ * @Serializer\AccessType("public_method")
  */
 class ClientReceiptRequest
 {
     /**
-     * @var string
-     * required
+     * @var string|null
      * @Serializer\Groups({"set", "get"})
      * @Serializer\SerializedName("email")
      * @Serializer\Type("string")
@@ -20,8 +20,7 @@ class ClientReceiptRequest
     private $email;
 
     /**
-     * @var string
-     * required
+     * @var string|null
      * @Serializer\Groups({"set", "get"})
      * @Serializer\SerializedName("phone")
      * @Serializer\Type("string")
@@ -30,7 +29,7 @@ class ClientReceiptRequest
 
 
     /**
-     * @var string
+     * @var string|null
      *
      * @Serializer\Groups({"set", "get"})
      * @Serializer\SerializedName("name")
@@ -39,7 +38,7 @@ class ClientReceiptRequest
     private $name;
 
     /**
-     * @var string
+     * @var string|null
      *
      * @Serializer\Groups({"set", "get"})
      * @Serializer\SerializedName("inn")
@@ -47,56 +46,72 @@ class ClientReceiptRequest
      */
     private $inn;
 
-    public function __construct($email, $phone)
+    public function __construct(string $email = null, string $phone = null)
     {
         $this->email = $email;
         $this->phone = $phone;
     }
 
     /**
-     * @return string
+     * @return string|null
      */
-    public function getEmail(): string
+    public function getEmail(): ?string
     {
         return $this->email;
     }
 
     /**
-     * @return string
+     * @param string|null $email
      */
-    public function getPhone(): string
+    public function setEmail(?string $email): void
+    {
+        $this->email = $email;
+    }
+
+    /**
+     * @return string|null
+     */
+    public function getPhone(): ?string
     {
         return $this->phone;
     }
 
     /**
-     * @return string
+     * @param string|null $phone
      */
-    public function getName(): string
+    public function setPhone(?string $phone): void
+    {
+        $this->phone = $phone;
+    }
+
+    /**
+     * @return string|null
+     */
+    public function getName(): ?string
     {
         return $this->name;
     }
 
     /**
-     * @param string $name
+     * @param string|null $name
      */
-    public function setName(string $name): void
+    public function setName(?string $name): void
     {
         $this->name = $name;
     }
 
     /**
-     * @return string
+     * @return string|null
      */
-    public function getInn(): string
+    public function getInn(): ?string
     {
         return $this->inn;
     }
 
     /**
-     * @param string $inn
+     * @param string|null $inn
      */
-    public function setInn(string $inn): void
+    public function setInn(?string $inn): void
     {
         $this->inn = $inn;
     }
