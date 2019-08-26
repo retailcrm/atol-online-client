@@ -50,9 +50,9 @@ class ReceiptRequest
     private $payments;
 
     /**
-     * @var \AtolOnlineClient\Request\V4\VatReceiptRequest[]
+     * @var \AtolOnlineClient\Request\V4\VatReceiptRequest[]|null
      * "minItems": 1, "maxItems": 6,
-     * required
+     *
      * @Serializer\Groups({"set", "get"})
      * @Serializer\SerializedName("vats")
      * @Serializer\Type("array<AtolOnlineClient\Request\V4\VatReceiptRequest>")
@@ -133,17 +133,17 @@ class ReceiptRequest
     }
 
     /**
-     * @return VatReceiptRequest[]
+     * @return VatReceiptRequest[]|null
      */
-    public function getVats(): array
+    public function getVats(): ?array
     {
         return $this->vats;
     }
 
     /**
-     * @param VatReceiptRequest[] $vats
+     * @param VatReceiptRequest[]|null $vats
      */
-    public function setVats(array $vats): void
+    public function setVats(?array $vats): void
     {
         $this->vats = $vats;
     }
