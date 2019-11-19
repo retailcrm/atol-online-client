@@ -1,10 +1,15 @@
 language: php
 
 php:
-    - 7.1
     - 7.2
     - 7.3
 
+env:
+    - JMS=0.12
+    - JMS=1.0
+    - JMS=2.0
+    - JMS=3.0
+
 before_install:
     - composer selfupdate
-    - composer install --dev --no-interaction --prefer-dist
+    - composer require jms/serializer=^$JMS --no-interaction --prefer-dist
