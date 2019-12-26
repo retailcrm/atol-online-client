@@ -30,22 +30,22 @@ trait PaymentReceiptRequestTrait
 
         $item = new ReceiptItemRequest();
         $item->setName('test item');
-        $item->setPrice(100);
+        $item->setPrice(100.1);
         $item->setQuantity(1);
-        $item->setSum(100);
+        $item->setSum(100.1);
         $item->setMeasurementUnit('kg');
         $item->setPaymentMethod(ReceiptItemRequest::PAYMENT_METHOD_ADVANCE);
         $item->setPaymentObject(ReceiptItemRequest::PAYMENT_OBJECT_AGENT_COMMISSION);
-        $item->setVat(new VatReceiptRequest('vat20', 20));
+        $item->setVat(new VatReceiptRequest('vat20', 20.2));
         $item->setNomenclatureCode('00');
 
         $receipt = new ReceiptRequest();
-        $receipt->setTotal('100');
+        $receipt->setTotal(100.1);
         $receipt->setClient($client);
         $receipt->setCompany($company);
         $receipt->setItems([$item]);
-        $receipt->setPayments([new ReceiptPaymentRequest(0, 100)]);
-        $receipt->setVats([new VatReceiptRequest('vat20', 20)]);
+        $receipt->setPayments([new ReceiptPaymentRequest(0, 100.1)]);
+        $receipt->setVats([new VatReceiptRequest('vat20', 20.2)]);
 
         /** @var PaymentReceiptRequest $request */
         $request = new PaymentReceiptRequest();

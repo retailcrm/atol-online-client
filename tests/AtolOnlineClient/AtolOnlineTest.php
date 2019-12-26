@@ -160,7 +160,7 @@ class AtolOnlineTest extends TestCase
         $request->setTimestamp('17.07.2019 10:14:22');
 
         $this->assertEquals(
-            '{"external_id":"test","receipt":{"client":{"email":"test@test.local"},"company":{"email":"test@test.local","inn":"11111111","payment_address":"address"},"items":[{"name":"test item","price":100,"quantity":1,"sum":100,"measurement_unit":"kg","payment_method":"advance","payment_object":"agent_commission","vat":{"type":"vat20","sum":20},"nomenclature_code":"00"}],"payments":[{"type":0,"sum":100}],"vats":[{"type":"vat20","sum":20}],"total":100},"timestamp":"17.07.2019 10:14:22","service":{"callback_url":"test.local"}}',
+            '{"external_id":"test","receipt":{"client":{"email":"test@test.local"},"company":{"email":"test@test.local","inn":"11111111","payment_address":"address"},"items":[{"name":"test item","price":100.1,"quantity":1,"sum":100.1,"measurement_unit":"kg","payment_method":"advance","payment_object":"agent_commission","vat":{"type":"vat20","sum":20.2},"nomenclature_code":"00"}],"payments":[{"type":0,"sum":100.1}],"vats":[{"type":"vat20","sum":20.2}],"total":100.1},"timestamp":"17.07.2019 10:14:22","service":{"callback_url":"test.local"}}',
             $this->atol->serializeOperationRequest($request)
         );
     }
