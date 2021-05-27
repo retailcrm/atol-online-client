@@ -53,11 +53,11 @@ class ReceiptItemRequest
     private $price;
 
     /**
-     * @var integer
+     * @var float
      * required
      * @Serializer\Groups({"set", "get"})
      * @Serializer\SerializedName("quantity")
-     * @Serializer\Type("integer")
+     * @Serializer\Type("float")
      */
     private $quantity;
 
@@ -175,17 +175,17 @@ class ReceiptItemRequest
     }
 
     /**
-     * @return int
+     * @return float
      */
-    public function getQuantity(): int
+    public function getQuantity(): float
     {
         return $this->quantity;
     }
 
     /**
-     * @param int $quantity
+     * @param float $quantity
      */
-    public function setQuantity(int $quantity): void
+    public function setQuantity(float $quantity): void
     {
         $this->quantity = $quantity;
     }

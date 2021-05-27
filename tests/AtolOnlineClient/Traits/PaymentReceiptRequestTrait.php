@@ -31,7 +31,7 @@ trait PaymentReceiptRequestTrait
         $item = new ReceiptItemRequest();
         $item->setName('test item');
         $item->setPrice(100.1);
-        $item->setQuantity(1);
+        $item->setQuantity(1.1);
         $item->setSum(100.1);
         $item->setMeasurementUnit('kg');
         $item->setPaymentMethod(ReceiptItemRequest::PAYMENT_METHOD_ADVANCE);
