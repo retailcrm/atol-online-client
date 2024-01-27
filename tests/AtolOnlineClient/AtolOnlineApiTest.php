@@ -143,7 +143,7 @@ class AtolOnlineApiTest extends TestCase
      */
     public function testGetTokenBadResponse(): void
     {
-        $api = $this->getApi([new BadResponseException('', new Request('GET', 'test'))]);
+        $api = $this->getApi([new BadResponseException('', new Request('GET', 'test'), new Response())]);
 
         $this->assertFalse($this->callMethod($api, 'getToken'));
     }
