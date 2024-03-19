@@ -9,6 +9,7 @@ use JMS\Serializer\Annotation as Serializer;
  */
 class ReceiptPaymentRequest
 {
+    const TYPE_CASH = 0;
     const TYPE_ELECTRON = 1;
     //аванс
     const TYPE_PREPAY = 2;
