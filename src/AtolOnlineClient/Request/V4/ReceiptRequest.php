@@ -69,6 +69,15 @@ class ReceiptRequest
     private $total;
 
     /**
+     * @var boolean
+     *
+     * @Serializer\Groups({"set", "get"})
+     * @Serializer\SerializedName("internet")
+     * @Serializer\Type("bool")
+     */
+    private $internet;
+
+    /**
      * @return ClientReceiptRequest
      */
     public function getClient(): ClientReceiptRequest
@@ -162,5 +171,21 @@ class ReceiptRequest
     public function setTotal(float $total): void
     {
         $this->total = $total;
+    }
+
+    /**
+     * @return bool
+     */
+    public function isInternet(): bool
+    {
+        return $this->internet;
+    }
+
+    /**
+     * @param bool $internet
+     */
+    public function setInternet(bool $internet): void
+    {
+        $this->internet = $internet;
     }
 }
