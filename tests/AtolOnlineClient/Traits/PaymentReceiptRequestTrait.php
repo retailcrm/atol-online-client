@@ -46,6 +46,7 @@ trait PaymentReceiptRequestTrait
         $receipt->setItems([$item]);
         $receipt->setPayments([new ReceiptPaymentRequest(0, 100.1)]);
         $receipt->setVats([new VatReceiptRequest('vat20', 20.2)]);
+        $receipt->setInternet(true);
 
         /** @var PaymentReceiptRequest $request */
         $request = new PaymentReceiptRequest();

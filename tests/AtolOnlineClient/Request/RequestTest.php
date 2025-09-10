@@ -82,7 +82,8 @@ class RequestTest extends TestCase
         "sum": 9.09
       }
     ],
-    "total": 400
+    "total": 400,
+    "internet": true
   },
   "service": {
     "callback_url": "http://testtest"
